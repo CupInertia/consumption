@@ -1,22 +1,38 @@
 package com.meter.consumption_meter.adapters;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity(name = "MeteringPoint")
 @Table(name = "metering_point")
-@Builder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@Setter
+@NoArgsConstructor
 public class MeteringPointEntity {
+
     @Id private String id;
 
+    @Column(name = "customer_id")
+    private String customerId;
+
     private String address;
+
+    @JoinColumn(name = "metering_point_id")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConsumptionEntity> consumption = new ArrayList<>();
+
+    public void addConsumption(final ConsumptionEntity consumptionReading) {
+        consumption.add(consumptionReading);
+        consumptionReading.setMeteringPointId(id);
+    }
 }

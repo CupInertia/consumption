@@ -20,8 +20,7 @@ public class ConsumptionCostController {
     @GetMapping("/customer/{customerId}/consumption")
     public List<ConsumptionCost> getConsumptionCost(
             @AuthenticationPrincipal UserDetails user,
-            @PathVariable("customerId") String customerId,
-            @PathVariable("meterId") String meterId) {
+            @PathVariable("customerId") String customerId) {
         return getConsumptionCosts.get(UUID.fromString(customerId));
     }
 }

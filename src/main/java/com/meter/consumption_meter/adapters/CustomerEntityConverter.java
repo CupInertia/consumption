@@ -19,6 +19,7 @@ public class CustomerEntityConverter implements Converter<CustomerEntity, Custom
                 .lastName(source.getLastName())
                 .username(source.getUsername())
                 .password(source.getPassword())
+                .meteringPoints(null)
                 .build();
     }
 }

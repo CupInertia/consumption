@@ -15,14 +15,12 @@ public class CustomerAdaper implements CustomerPort {
 
     @Override
     public Customer save(Customer customer) {
-        final var customerEntity =
-                CustomerEntity.builder()
-                        .ID(customer.getID().toString())
-                        .firstName(customer.getFirstName())
-                        .lastName(customer.getLastName())
-                        .username(customer.getUsername())
-                        .password(customer.getPassword())
-                        .build();
+        final var customerEntity = new CustomerEntity();
+        customerEntity.setID(customer.getID().toString());
+        customerEntity.setFirstName(customer.getFirstName());
+        customerEntity.setLastName(customer.getLastName());
+        customerEntity.setUsername(customer.getUsername());
+        customerEntity.setPassword(customer.getPassword());
 
         return customerEntityConverter.convert(customerRepository.save(customerEntity));
     }
