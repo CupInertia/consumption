@@ -1,6 +1,7 @@
 package com.meter.consumption_meter.usecases;
 
 import com.meter.consumption_meter.domain.Consumption;
+import com.meter.consumption_meter.domain.MeteringPoint;
 import com.meter.consumption_meter.domain.ports.out.CostPort;
 import com.meter.consumption_meter.domain.ports.out.CustomerPort;
 import java.util.ArrayList;
@@ -28,16 +29,7 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
             if (consumption.size() == 1) {
                 final var reading = consumption.get(0);
 
-                consumptionCosts.add(
-                        ConsumptionCost.builder()
-                                .cost(
-                                        reading.getNumberOfKiloWattHours()
-                                                .multiply(
-                                                        costPort.getCostPerKiloWattHour(
-                                                                reading.getTimeOfReading())))
-                                .meteringPoint(meteringPoint)
-                                .timestamp(reading.getTimeOfReading())
-                                .build());
+                consumptionCosts.add(calculateCost(reading, meteringPoint));
             } else {
                 final var sortedConsumption =
                         consumption.stream()
@@ -50,46 +42,37 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
                 final var readingIterator = sortedConsumption.iterator();
 
                 var previousReading = readingIterator.next();
-                var previousNumberOfKiloWattHours = previousReading.getNumberOfKiloWattHours();
-                var previousTimeOfReading = previousReading.getTimeOfReading();
                 while (readingIterator.hasNext()) {
                     final var reading = readingIterator.next();
 
                     if (isNextConsumptionPeriod(reading, previousReading)) {
-                        consumptionCosts.add(
-                                ConsumptionCost.builder()
-                                        .cost(
-                                                previousNumberOfKiloWattHours.multiply(
-                                                        costPort.getCostPerKiloWattHour(
-                                                                previousTimeOfReading)))
-                                        .numberOfKiloWattHours(previousNumberOfKiloWattHours)
-                                        .meteringPoint(meteringPoint)
-                                        .timestamp(previousTimeOfReading)
-                                        .build());
+                        consumptionCosts.add(calculateCost(previousReading, meteringPoint));
                     }
 
                     previousReading = reading;
-                    previousNumberOfKiloWattHours = reading.getNumberOfKiloWattHours();
-                    previousTimeOfReading = reading.getTimeOfReading();
 
                     if (!readingIterator.hasNext()) {
-                        consumptionCosts.add(
-                                ConsumptionCost.builder()
-                                        .cost(
-                                                previousNumberOfKiloWattHours.multiply(
-                                                        costPort.getCostPerKiloWattHour(
-                                                                previousReading
-                                                                        .getTimeOfReading())))
-                                        .numberOfKiloWattHours(previousNumberOfKiloWattHours)
-                                        .meteringPoint(meteringPoint)
-                                        .timestamp(previousTimeOfReading)
-                                        .build());
+                        consumptionCosts.add(calculateCost(previousReading, meteringPoint));
                     }
                 }
             }
         }
 
         return consumptionCosts;
+    }
+
+    private ConsumptionCost calculateCost(
+            final Consumption reading, final MeteringPoint meteringPoint) {
+        return ConsumptionCost.builder()
+                .cost(
+                        reading.getNumberOfKiloWattHours()
+                                .multiply(
+                                        costPort.getCostPerKiloWattHour(
+                                                reading.getTimeOfReading())))
+                .numberOfKiloWattHours(reading.getNumberOfKiloWattHours())
+                .meteringPoint(meteringPoint)
+                .timestamp(reading.getTimeOfReading())
+                .build();
     }
 
     private boolean isNextConsumptionPeriod(
