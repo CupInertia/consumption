@@ -6,5 +6,5 @@ import java.util.UUID;
 public interface CustomerPort {
     public Customer save(Customer customer);
 
-    public Object getCustomer(UUID customerId);
+    public Customer getCustomer(UUID customerId);
 }
