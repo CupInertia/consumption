@@ -21,7 +21,7 @@ public class ConsumptionEntity {
     @Column(name = "metering_point_id")
     private String meteringPointId;
 
-    private float kiloWattHours;
+    private long wattHours;
 
     private Date timestamp;
 }

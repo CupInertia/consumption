@@ -4,6 +4,7 @@ import com.meter.consumption_meter.domain.Consumption;
 import com.meter.consumption_meter.domain.MeteringPoint;
 import com.meter.consumption_meter.domain.ports.out.CostPort;
 import com.meter.consumption_meter.domain.ports.out.CustomerPort;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -63,13 +64,12 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
 
     private ConsumptionCost calculateCost(
             final Consumption reading, final MeteringPoint meteringPoint) {
+        final var wattHoursConsumed = BigDecimal.valueOf(reading.getWattHours());
         return ConsumptionCost.builder()
                 .cost(
-                        reading.getNumberOfKiloWattHours()
-                                .multiply(
-                                        costPort.getCostPerKiloWattHour(
-                                                reading.getTimeOfReading())))
-                .numberOfKiloWattHours(reading.getNumberOfKiloWattHours())
+                        wattHoursConsumed.multiply(
+                                costPort.getCostPerKiloWattHour(reading.getTimeOfReading())))
+                .kiloWattHoursConsumed(wattHoursConsumed.divide(BigDecimal.valueOf(1000)))
                 .meteringPoint(meteringPoint)
                 .timestamp(reading.getTimeOfReading())
                 .build();

@@ -57,7 +57,7 @@ public class DataSimulationConfig {
             final var consumption = new ConsumptionEntity();
             consumption.setId(createID());
             consumption.setTimestamp(new Date(calendar.getTimeInMillis()));
-            consumption.setKiloWattHours((float) (Math.random() * 100));
+            consumption.setWattHours(Double.valueOf(Math.random() * 100000).longValue());
 
             consumptionrReadings.add(consumption);
         }
