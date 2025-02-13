@@ -1,4 +1,4 @@
-package com.meter.consumption_meter.adapters;
+package com.meter.consumption_meter.adapters.in;
 
 import com.meter.consumption_meter.usecases.ConsumptionCost;
 import com.meter.consumption_meter.usecases.GetConsumptionCosts;

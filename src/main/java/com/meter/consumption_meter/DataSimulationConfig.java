@@ -1,10 +1,10 @@
 package com.meter.consumption_meter;
 
-import com.meter.consumption_meter.adapters.ConsumptionEntity;
-import com.meter.consumption_meter.adapters.CustomerEntity;
-import com.meter.consumption_meter.adapters.CustomerRepository;
-import com.meter.consumption_meter.adapters.MeteringPointEntity;
-import java.sql.Date;
+import com.meter.consumption_meter.adapters.out.ConsumptionEntity;
+import com.meter.consumption_meter.adapters.out.CustomerEntity;
+import com.meter.consumption_meter.adapters.out.CustomerRepository;
+import com.meter.consumption_meter.adapters.out.MeteringPointEntity;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -56,7 +56,7 @@ public class DataSimulationConfig {
             calendar.add(Calendar.MONTH, i);
             final var consumption = new ConsumptionEntity();
             consumption.setId(createID());
-            consumption.setTimestamp(new Date(calendar.getTimeInMillis()));
+            consumption.setTimestamp(new Timestamp(calendar.getTimeInMillis()));
             consumption.setWattHours(Double.valueOf(Math.random() * 100000).longValue());
 
             consumptionrReadings.add(consumption);

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import com.meter.consumption_meter.domain.Consumption;
 import com.meter.consumption_meter.domain.Customer;
 import com.meter.consumption_meter.domain.MeteringPoint;
-import com.meter.consumption_meter.domain.ports.out.ConsumptionPort;
 import com.meter.consumption_meter.domain.ports.out.CostPort;
 import com.meter.consumption_meter.domain.ports.out.CustomerPort;
 import java.math.BigDecimal;
@@ -25,8 +24,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class GetConsumptionCostsImplTest {
 
     @Mock private CustomerPort customerPort;
-
-    @Mock private ConsumptionPort consumptionPort;
 
     @Mock private CostPort costPort;
 
@@ -66,9 +63,9 @@ public class GetConsumptionCostsImplTest {
                 Customer.builder().ID(customerId).meteringPoints(List.of(meteringPoint)).build();
 
         when(customerPort.getCustomer(customerId)).thenReturn(customer);
-        when(costPort.getCostPerKiloWattHour(consumptionForJanuaryB.getTimeOfReading()))
+        when(costPort.getCostPerKiloWattHourInCents(consumptionForJanuaryB.getTimeOfReading()))
                 .thenReturn(BigDecimal.valueOf(3));
-        when(costPort.getCostPerKiloWattHour(consumptionForFebruary.getTimeOfReading()))
+        when(costPort.getCostPerKiloWattHourInCents(consumptionForFebruary.getTimeOfReading()))
                 .thenReturn(BigDecimal.TWO);
 
         // when

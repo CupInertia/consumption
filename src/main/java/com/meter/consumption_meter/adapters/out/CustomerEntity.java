@@ -1,4 +1,4 @@
-package com.meter.consumption_meter.adapters;
+package com.meter.consumption_meter.adapters.out;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

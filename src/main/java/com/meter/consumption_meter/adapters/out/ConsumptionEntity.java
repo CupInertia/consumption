@@ -1,10 +1,10 @@
-package com.meter.consumption_meter.adapters;
+package com.meter.consumption_meter.adapters.out;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.sql.Date;
+import java.sql.Timestamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,5 +23,5 @@ public class ConsumptionEntity {
 
     private long wattHours;
 
-    private Date timestamp;
+    private Timestamp timestamp;
 }

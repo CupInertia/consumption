@@ -1,4 +1,4 @@
-package com.meter.consumption_meter.adapters;
+package com.meter.consumption_meter.adapters.out;
 
 import com.meter.consumption_meter.domain.Consumption;
 import com.meter.consumption_meter.domain.Customer;

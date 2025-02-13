@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public interface CostPort {
-    public BigDecimal getCostPerKiloWattHour(Date date);
+    public BigDecimal getCostPerKiloWattHourInCents(Date date);
 }

@@ -1,7 +1,7 @@
 package com.meter.consumption_meter;
 
-import com.meter.consumption_meter.adapters.CustomerEntity;
-import com.meter.consumption_meter.adapters.CustomerRepository;
+import com.meter.consumption_meter.adapters.out.CustomerEntity;
+import com.meter.consumption_meter.adapters.out.CustomerRepository;
 import java.util.Collection;
 import java.util.Collections;
 import org.springframework.context.annotation.Bean;

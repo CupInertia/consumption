@@ -1,4 +1,4 @@
-package com.meter.consumption_meter.adapters;
+package com.meter.consumption_meter.adapters.out;
 
 import org.springframework.data.repository.CrudRepository;
 

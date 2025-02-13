@@ -1,4 +1,4 @@
-package com.meter.consumption_meter.adapters;
+package com.meter.consumption_meter.adapters.out;
 
 import com.meter.consumption_meter.domain.ports.out.CostPort;
 import java.math.BigDecimal;
@@ -6,10 +6,10 @@ import java.util.Date;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CostAdapter implements CostPort {
+public class EleringCostAdapter implements CostPort {
 
     @Override
-    public BigDecimal getCostPerKiloWattHour(Date date) {
+    public BigDecimal getCostPerKiloWattHourInCents(Date date) {
         return BigDecimal.ONE;
     }
 }

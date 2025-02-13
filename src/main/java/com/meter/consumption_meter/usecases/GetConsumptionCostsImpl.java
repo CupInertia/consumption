@@ -68,7 +68,7 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
         return ConsumptionCost.builder()
                 .cost(
                         wattHoursConsumed.multiply(
-                                costPort.getCostPerKiloWattHour(reading.getTimeOfReading())))
+                                costPort.getCostPerKiloWattHourInCents(reading.getTimeOfReading())))
                 .kiloWattHoursConsumed(wattHoursConsumed.divide(BigDecimal.valueOf(1000)))
                 .meteringPoint(meteringPoint)
                 .timestamp(reading.getTimeOfReading())
