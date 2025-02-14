@@ -42,7 +42,7 @@ public class CustomerEntityConverter implements Converter<CustomerEntity, Custom
 
     private Consumption mapConsumption(ConsumptionEntity consumptionEntity) {
         return Consumption.builder()
-                .timeOfReading(consumptionEntity.getTimestamp())
+                .timeOfReading(consumptionEntity.getTimestampWithOffset())
                 .wattHours(consumptionEntity.getWattHours())
                 .build();
     }

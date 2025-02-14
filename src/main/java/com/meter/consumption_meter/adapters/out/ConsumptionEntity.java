@@ -4,7 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,5 +25,16 @@ public class ConsumptionEntity {
 
     private long wattHours;
 
-    private Timestamp timestamp;
+    private Instant timestamp;
+
+    private int timestampOffset;
+
+    public void setTimestamp(final OffsetDateTime timestamp) {
+        this.timestamp = timestamp.toInstant();
+        this.timestampOffset = timestamp.getOffset().getTotalSeconds();
+    }
+
+    public OffsetDateTime getTimestampWithOffset() {
+        return this.timestamp.atOffset(ZoneOffset.ofTotalSeconds(timestampOffset));
+    }
 }

@@ -1,8 +1,8 @@
 package com.meter.consumption_meter.domain.ports.out;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 public interface CostPort {
-    public BigDecimal getCostPerKiloWattHourInCents(Date date);
+    public BigDecimal getCostPerKiloWattHourInCents(OffsetDateTime date);
 }

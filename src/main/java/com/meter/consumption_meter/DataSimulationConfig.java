@@ -4,9 +4,10 @@ import com.meter.consumption_meter.adapters.out.ConsumptionEntity;
 import com.meter.consumption_meter.adapters.out.CustomerEntity;
 import com.meter.consumption_meter.adapters.out.CustomerRepository;
 import com.meter.consumption_meter.adapters.out.MeteringPointEntity;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.boot.CommandLineRunner;
@@ -52,18 +53,13 @@ public class DataSimulationConfig {
     private MeteringPointEntity createMeteringPoint(final String address) {
         final List<ConsumptionEntity> consumptionrReadings = new ArrayList<>();
 
-        long previousWattHours = 0;
         for (int month = -12; month < 0; month++) {
-            final var calendar = Calendar.getInstance();
-            calendar.set(Calendar.MINUTE, 59);
-            calendar.set(Calendar.SECOND, 59);
-            calendar.add(Calendar.MONTH, month);
+            final var localDateTime =
+                    LocalDateTime.now().withMinute(59).withSecond(59).minusMonths(month);
             final var consumption = new ConsumptionEntity();
             consumption.setId(createID());
-            consumption.setTimestamp(new Timestamp(calendar.getTimeInMillis()));
-            consumption.setWattHours(
-                    previousWattHours + Double.valueOf(Math.random() * 100000).longValue());
-            previousWattHours = consumption.getWattHours();
+            consumption.setTimestamp(OffsetDateTime.of(localDateTime, ZoneOffset.ofHours(2)));
+            consumption.setWattHours(Double.valueOf(Math.random() * 100000).longValue());
 
             consumptionrReadings.add(consumption);
         }

@@ -1,6 +1,6 @@
 package com.meter.consumption_meter.domain;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,6 +11,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class Consumption {
-    private Date timeOfReading;
+    private OffsetDateTime timeOfReading;
     private long wattHours;
 }

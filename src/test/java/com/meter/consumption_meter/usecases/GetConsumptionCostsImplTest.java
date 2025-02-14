@@ -11,7 +11,8 @@ import com.meter.consumption_meter.domain.MeteringPoint;
 import com.meter.consumption_meter.domain.ports.out.CostPort;
 import com.meter.consumption_meter.domain.ports.out.CustomerPort;
 import java.math.BigDecimal;
-import java.util.Calendar;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 import org.junit.Test;
@@ -34,18 +35,15 @@ public class GetConsumptionCostsImplTest {
         // given
         final var customerId = UUID.randomUUID();
 
-        final var calendar = Calendar.getInstance();
-        calendar.set(2025, 1, 1, 1, 1, 59);
+        final var calendar = OffsetDateTime.of(2025, 1, 1, 1, 1, 59, 0, ZoneOffset.ofHours(2));
         final var consumptionForJanuaryA =
-                Consumption.builder().timeOfReading(calendar.getTime()).wattHours(1).build();
+                Consumption.builder().timeOfReading(calendar).wattHours(1).build();
 
-        calendar.add(Calendar.HOUR_OF_DAY, 1);
         final var consumptionForJanuaryB =
-                Consumption.builder().timeOfReading(calendar.getTime()).wattHours(2).build();
+                Consumption.builder().timeOfReading(calendar.plusHours(1)).wattHours(2).build();
 
-        calendar.add(Calendar.MONTH, 1);
         final var consumptionForFebruary =
-                Consumption.builder().timeOfReading(calendar.getTime()).wattHours(10).build();
+                Consumption.builder().timeOfReading(calendar.plusMonths(1)).wattHours(10).build();
 
         final var meteringPoint =
                 MeteringPoint.builder()
