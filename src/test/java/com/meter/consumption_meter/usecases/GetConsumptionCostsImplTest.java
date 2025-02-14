@@ -35,16 +35,13 @@ public class GetConsumptionCostsImplTest {
         final var customerId = UUID.randomUUID();
 
         final var calendar = Calendar.getInstance();
-        calendar.set(2025, 1, 1);
+        calendar.set(2025, 1, 1, 1, 1, 59);
         final var consumptionForJanuaryA =
                 Consumption.builder().timeOfReading(calendar.getTime()).wattHours(1).build();
 
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        calendar.add(Calendar.HOUR_OF_DAY, 1);
         final var consumptionForJanuaryB =
-                Consumption.builder()
-                        .timeOfReading(calendar.getTime())
-                        .wattHours(consumptionForJanuaryA.getWattHours() + 1)
-                        .build();
+                Consumption.builder().timeOfReading(calendar.getTime()).wattHours(2).build();
 
         calendar.add(Calendar.MONTH, 1);
         final var consumptionForFebruary =
@@ -63,8 +60,10 @@ public class GetConsumptionCostsImplTest {
                 Customer.builder().ID(customerId).meteringPoints(List.of(meteringPoint)).build();
 
         when(customerPort.getCustomer(customerId)).thenReturn(customer);
-        when(costPort.getCostPerKiloWattHourInCents(consumptionForJanuaryB.getTimeOfReading()))
+        when(costPort.getCostPerKiloWattHourInCents(consumptionForJanuaryA.getTimeOfReading()))
                 .thenReturn(BigDecimal.valueOf(3));
+        when(costPort.getCostPerKiloWattHourInCents(consumptionForJanuaryB.getTimeOfReading()))
+                .thenReturn(BigDecimal.valueOf(4));
         when(costPort.getCostPerKiloWattHourInCents(consumptionForFebruary.getTimeOfReading()))
                 .thenReturn(BigDecimal.TWO);
 
@@ -74,16 +73,16 @@ public class GetConsumptionCostsImplTest {
         // then
         assertThat(costs, hasSize(2));
 
-        final var firstCost = costs.get(0);
-        assertThat(firstCost.getMeteringPoint(), is(meteringPoint));
-        assertThat(firstCost.getCost(), is(BigDecimal.valueOf(6)));
-        assertThat(firstCost.getKiloWattHoursConsumed(), is(BigDecimal.valueOf(0.002)));
-        assertThat(firstCost.getTimestamp(), is(consumptionForJanuaryB.getTimeOfReading()));
+        final var januaryCosts = costs.get(0);
+        assertThat(januaryCosts.getMeteringPoint(), is(meteringPoint));
+        assertThat(januaryCosts.getCost(), is(BigDecimal.valueOf(11)));
+        assertThat(januaryCosts.getKiloWattHoursConsumed(), is(BigDecimal.valueOf(0.003)));
+        assertThat(januaryCosts.getTimestamp(), is(consumptionForJanuaryB.getTimeOfReading()));
 
-        final var secondCost = costs.get(1);
-        assertThat(secondCost.getMeteringPoint(), is(meteringPoint));
-        assertThat(secondCost.getCost(), is(BigDecimal.valueOf(20)));
-        assertThat(secondCost.getKiloWattHoursConsumed(), is(BigDecimal.valueOf(0.01)));
-        assertThat(secondCost.getTimestamp(), is(consumptionForFebruary.getTimeOfReading()));
+        final var februaryCosts = costs.get(1);
+        assertThat(februaryCosts.getMeteringPoint(), is(meteringPoint));
+        assertThat(februaryCosts.getCost(), is(BigDecimal.valueOf(20)));
+        assertThat(februaryCosts.getKiloWattHoursConsumed(), is(BigDecimal.valueOf(0.01)));
+        assertThat(februaryCosts.getTimestamp(), is(consumptionForFebruary.getTimeOfReading()));
     }
 }

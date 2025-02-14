@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class EleringCostAdapter implements CostPort {
 
     @Override
-    public BigDecimal getCostPerKiloWattHourInCents(Date date) {
+    public BigDecimal getCostPerKiloWattHourInCents(final Date date) {
         return BigDecimal.ONE;
     }
 }

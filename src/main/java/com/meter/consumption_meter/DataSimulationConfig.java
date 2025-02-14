@@ -51,13 +51,19 @@ public class DataSimulationConfig {
 
     private MeteringPointEntity createMeteringPoint(final String address) {
         final List<ConsumptionEntity> consumptionrReadings = new ArrayList<>();
-        for (int i = -12; i < 0; i++) {
+
+        long previousWattHours = 0;
+        for (int month = -12; month < 0; month++) {
             final var calendar = Calendar.getInstance();
-            calendar.add(Calendar.MONTH, i);
+            calendar.set(Calendar.MINUTE, 59);
+            calendar.set(Calendar.SECOND, 59);
+            calendar.add(Calendar.MONTH, month);
             final var consumption = new ConsumptionEntity();
             consumption.setId(createID());
             consumption.setTimestamp(new Timestamp(calendar.getTimeInMillis()));
-            consumption.setWattHours(Double.valueOf(Math.random() * 100000).longValue());
+            consumption.setWattHours(
+                    previousWattHours + Double.valueOf(Math.random() * 100000).longValue());
+            previousWattHours = consumption.getWattHours();
 
             consumptionrReadings.add(consumption);
         }
