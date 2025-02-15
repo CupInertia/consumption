@@ -2,6 +2,7 @@ package com.meter.consumption_meter.adapters.out;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -69,25 +71,35 @@ public class EleringCostAdapterTest {
                   "centsPerKwhWithVat": 7.93,
                   "eurPerMwh": 65,
                   "eurPerMwhWithVat": 79.3,
-                  "fromDateTime": "2024-02-12T01:00:00+02:00",
-                  "toDateTime": "2024-02-12T01:59:59.999999999+02:00"
+                  "fromDateTime": "2024-03-12T01:00:00+02:00",
+                  "toDateTime": "2024-03-12T01:59:59.999999999+02:00"
                 }]
                 """;
 
         final var expectedURI =
                 "https://estfeed.elering.ee/api/public/v1/energy-price/electricity"
-                    + "?startDateTime=2024-02-11T22:00:00Z&endDateTime=2024-03-11T22:00:00Z&resolution=one_hour";
+                    + "?startDateTime=2024-02-11T22:00:00Z&endDateTime=2024-05-11T22:00:00Z&resolution=one_hour";
 
         server.expect(requestTo(expectedURI))
                 .andRespond(withSuccess(response, MediaType.APPLICATION_JSON));
 
         final var expectedPrice = BigDecimal.valueOf(7.80922);
-        when(priceCache.cache(requestDate, expectedPrice)).thenReturn(expectedPrice);
+
+        when(priceCache.get(requestDate.toInstant()))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(expectedPrice));
 
         // when
         final var price = eleringCostAdapter.getPricePerKiloWattWithVAT(requestDate);
 
         // then
+        verify(priceCache).cache(requestDate.toInstant(), expectedPrice);
+        verify(priceCache)
+                .cache(
+                        OffsetDateTime.of(2024, 3, 12, 1, 0, 0, 0, ZoneOffset.ofHours(2))
+                                .toInstant(),
+                        BigDecimal.valueOf(7.93));
+
         assertThat(price, is(expectedPrice));
     }
 }

@@ -59,11 +59,11 @@ public class GetConsumptionCostsImplTest {
 
         when(customerPort.getCustomer(customerId)).thenReturn(customer);
         when(costPort.getPricePerKiloWattWithVAT(consumptionForJanuaryA.getTimeOfReading()))
-                .thenReturn(BigDecimal.valueOf(3));
+                .thenReturn(BigDecimal.valueOf(300));
         when(costPort.getPricePerKiloWattWithVAT(consumptionForJanuaryB.getTimeOfReading()))
-                .thenReturn(BigDecimal.valueOf(4));
+                .thenReturn(BigDecimal.valueOf(400));
         when(costPort.getPricePerKiloWattWithVAT(consumptionForFebruary.getTimeOfReading()))
-                .thenReturn(BigDecimal.TWO);
+                .thenReturn(BigDecimal.valueOf(200));
 
         // when
         final var costs = getConsumptionCosts.get(customerId);

@@ -1,9 +1,12 @@
 package com.meter.consumption_meter.usecases;
 
 import com.meter.consumption_meter.domain.Consumption;
+import com.meter.consumption_meter.domain.MeteringPoint;
 import com.meter.consumption_meter.domain.ports.out.CostPort;
 import com.meter.consumption_meter.domain.ports.out.CustomerPort;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -55,13 +58,11 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
 
                     if (isNextConsumptionPeriod(reading, previousReading)) {
                         consumptionCosts.add(
-                                ConsumptionCost.builder()
-                                        .cost(costThatMonth)
-                                        .kiloWattHoursConsumed(
-                                                wattsThatMonth.divide(BigDecimal.valueOf(1000)))
-                                        .meteringPoint(meteringPoint)
-                                        .timestamp(previousReading.getTimeOfReading())
-                                        .build());
+                                createConsumptionCost(
+                                        meteringPoint,
+                                        wattsThatMonth,
+                                        costThatMonth,
+                                        previousReading.getTimeOfReading()));
 
                         costThatMonth = BigDecimal.ZERO;
                         wattsThatMonth = BigDecimal.ZERO;
@@ -77,19 +78,30 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
 
                     if (!readingIterator.hasNext()) {
                         consumptionCosts.add(
-                                ConsumptionCost.builder()
-                                        .cost(costThatMonth)
-                                        .kiloWattHoursConsumed(
-                                                wattsThatMonth.divide(BigDecimal.valueOf(1000)))
-                                        .meteringPoint(meteringPoint)
-                                        .timestamp(previousReading.getTimeOfReading())
-                                        .build());
+                                createConsumptionCost(
+                                        meteringPoint,
+                                        wattsThatMonth,
+                                        costThatMonth,
+                                        previousReading.getTimeOfReading()));
                     }
                 }
             }
         }
 
         return consumptionCosts;
+    }
+
+    private ConsumptionCost createConsumptionCost(
+            final MeteringPoint meteringPoint,
+            BigDecimal wattsThatMonth,
+            BigDecimal costThatMonth,
+            OffsetDateTime tallingTime) {
+        return ConsumptionCost.builder()
+                .cost(costThatMonth.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN))
+                .kiloWattHoursConsumed(wattsThatMonth.divide(BigDecimal.valueOf(1000)))
+                .meteringPoint(meteringPoint)
+                .timestamp(tallingTime)
+                .build();
     }
 
     private boolean isNextConsumptionPeriod(
