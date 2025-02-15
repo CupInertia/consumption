@@ -16,32 +16,34 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class GetConsumptionCostsImpl implements GetConsumptionCosts {
+public class GetConsumptionReportsImpl implements GetConsumptionReports {
 
     private final CustomerPort customerPort;
     private final CostPort costPort;
 
     @Override
-    public List<ConsumptionCost> get(UUID customerId) {
-        final var consumptionCosts = new ArrayList<ConsumptionCost>();
-
+    public List<ConsumptionReport> get(UUID customerId) {
         final var customer = customerPort.getCustomer(customerId);
         final var meteringPoints = customer.getMeteringPoints();
 
+        var consumptionReports = new ArrayList<ConsumptionReport>();
         for (final var meteringPoint : meteringPoints) {
-            final var consumption = meteringPoint.getConsumption();
+            final var consumptionReport =
+                    ConsumptionReport.builder()
+                            .meterAddress(meteringPoint.getAddress())
+                            .meterID(meteringPoint.getId());
+
+            final var consumptionCosts = new ArrayList<ConsumptionCost>();
+
+            final var consumption =
+                    meteringPoint.getConsumption().stream()
+                            .sorted((a, b) -> a.getTimeOfReading().compareTo(b.getTimeOfReading()))
+                            .collect(Collectors.toList());
+
             if (!consumption.isEmpty()) {
-                final var sortedConsumption =
-                        consumption.stream()
-                                .sorted(
-                                        (a, b) ->
-                                                a.getTimeOfReading()
-                                                        .compareTo(b.getTimeOfReading()))
-                                .collect(Collectors.toList());
+                final var consumptionIterator = consumption.iterator();
 
-                final var readingIterator = sortedConsumption.iterator();
-
-                Consumption previousReading = readingIterator.next();
+                Consumption previousReading = consumptionIterator.next();
                 BigDecimal costThatMonth = BigDecimal.ZERO;
                 BigDecimal wattsThatMonth = BigDecimal.ZERO;
                 var costThatHour =
@@ -53,8 +55,8 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
                                 costThatHour.multiply(
                                         BigDecimal.valueOf(previousReading.getWattHours())));
 
-                while (readingIterator.hasNext()) {
-                    final var reading = readingIterator.next();
+                while (consumptionIterator.hasNext()) {
+                    final var reading = consumptionIterator.next();
 
                     if (isNextConsumptionPeriod(reading, previousReading)) {
                         consumptionCosts.add(
@@ -76,7 +78,7 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
                                             BigDecimal.valueOf(reading.getWattHours())));
                     previousReading = reading;
 
-                    if (!readingIterator.hasNext()) {
+                    if (!consumptionIterator.hasNext()) {
                         consumptionCosts.add(
                                 createConsumptionCost(
                                         meteringPoint,
@@ -85,10 +87,12 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
                                         previousReading.getTimeOfReading()));
                     }
                 }
+
+                consumptionReports.add(consumptionReport.costs(consumptionCosts).build());
             }
         }
 
-        return consumptionCosts;
+        return consumptionReports;
     }
 
     private ConsumptionCost createConsumptionCost(
@@ -97,10 +101,9 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
             BigDecimal costThatMonth,
             OffsetDateTime tallingTime) {
         return ConsumptionCost.builder()
+                .timestamp(tallingTime)
                 .cost(costThatMonth.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN))
                 .kiloWattHoursConsumed(wattsThatMonth.divide(BigDecimal.valueOf(1000)))
-                .meteringPoint(meteringPoint)
-                .timestamp(tallingTime)
                 .build();
     }
 

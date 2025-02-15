@@ -22,16 +22,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetConsumptionCostsImplTest {
+public class GetConsumptionReportsImplTest {
 
     @Mock private CustomerPort customerPort;
 
     @Mock private CostPort costPort;
 
-    @InjectMocks private GetConsumptionCostsImpl getConsumptionCosts;
+    @InjectMocks private GetConsumptionReportsImpl getConsumptionReport;
 
     @Test
-    public void calculatesCostBasedOnConsumptionAndPrice() {
+    public void compilesConsumptionCostsIntoMonthlyReports() {
         // given
         final var customerId = UUID.randomUUID();
 
@@ -47,6 +47,8 @@ public class GetConsumptionCostsImplTest {
 
         final var meteringPoint =
                 MeteringPoint.builder()
+                        .address("An address")
+                        .id(UUID.randomUUID())
                         .consumption(
                                 List.of(
                                         consumptionForJanuaryA,
@@ -66,19 +68,24 @@ public class GetConsumptionCostsImplTest {
                 .thenReturn(BigDecimal.valueOf(200));
 
         // when
-        final var costs = getConsumptionCosts.get(customerId);
+        final var reports = getConsumptionReport.get(customerId);
 
         // then
+        assertThat(reports, hasSize(1));
+
+        final var firstReport = reports.get(0);
+        final var costs = firstReport.getCosts();
         assertThat(costs, hasSize(2));
 
         final var januaryCosts = costs.get(0);
-        assertThat(januaryCosts.getMeteringPoint(), is(meteringPoint));
+        assertThat(firstReport.getMeterID(), is(meteringPoint.getId()));
+        assertThat(firstReport.getMeterAddress(), is(meteringPoint.getAddress()));
+
         assertThat(januaryCosts.getCost(), is(BigDecimal.valueOf(11)));
         assertThat(januaryCosts.getKiloWattHoursConsumed(), is(BigDecimal.valueOf(0.003)));
         assertThat(januaryCosts.getTimestamp(), is(consumptionForJanuaryB.getTimeOfReading()));
 
         final var februaryCosts = costs.get(1);
-        assertThat(februaryCosts.getMeteringPoint(), is(meteringPoint));
         assertThat(februaryCosts.getCost(), is(BigDecimal.valueOf(20)));
         assertThat(februaryCosts.getKiloWattHoursConsumed(), is(BigDecimal.valueOf(0.01)));
         assertThat(februaryCosts.getTimestamp(), is(consumptionForFebruary.getTimeOfReading()));

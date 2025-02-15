@@ -1,6 +1,5 @@
 package com.meter.consumption_meter.usecases;
 
-import com.meter.consumption_meter.domain.MeteringPoint;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class ConsumptionCost {
-    private MeteringPoint meteringPoint;
     private OffsetDateTime timestamp;
     private BigDecimal kiloWattHoursConsumed;
     private BigDecimal cost;
