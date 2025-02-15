@@ -2,7 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.2'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id("com.diffplug.spotless") version "7.0.2"
+	id 'com.diffplug.spotless' version "7.0.2"
+	id 'com.github.node-gradle.node' version '7.1.0'
 }
 
 group = 'com.meter'
@@ -15,23 +16,23 @@ java {
 }
 
 spotless {
-format 'misc', {
-	// define the files to apply `misc` to
-	target '*.gradle', '.gitattributes', '.gitignore'
+	format 'misc', {
+		// define the files to apply `misc` to
+		target '*.gradle', '.gitattributes', '.gitignore'
 
-	// define the steps to apply to those files
-	trimTrailingWhitespace()
-	leadingSpacesToTabs() // or leadingTabsToSpaces. Takes an integer argument if you don't like 4
-	endWithNewline()
-}
-java {
-	// don't need to set target, it is inferred from java
+		// define the steps to apply to those files
+		trimTrailingWhitespace()
+		leadingSpacesToTabs() // or leadingTabsToSpaces. Takes an integer argument if you don't like 4
+		endWithNewline()
+	}
+	java {
+		// don't need to set target, it is inferred from java
 
-	// apply a specific flavor of google-java-format
-	googleJavaFormat('1.25.2').aosp().reflowLongStrings().skipJavadocFormatting()
-	// fix formatting of type annotations
-	formatAnnotations()
-}
+		// apply a specific flavor of google-java-format
+		googleJavaFormat('1.25.2').aosp().reflowLongStrings().skipJavadocFormatting()
+		// fix formatting of type annotations
+		formatAnnotations()
+	}
 }
 
 repositories {
@@ -60,3 +61,27 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+node {
+	version = '14.17.6'
+	npmVersion = '6.14.15'
+	download = true
+}
+
+def frondEndDir = file("./src/main/front-end")
+
+tasks.register('installUI', Exec) {
+	workingDir frondEndDir
+	dependsOn npmInstall
+
+	commandLine  'npm', 'install'
+}
+
+tasks.register('buildUi', Exec) {
+	workingDir frondEndDir
+	dependsOn installUI
+
+	commandLine 'npm', 'run', 'build'
+}
+
+processResources.dependsOn buildUi
