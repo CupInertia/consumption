@@ -53,7 +53,7 @@ public class DataSimulationConfig {
     private MeteringPointEntity createMeteringPoint(final String address) {
         final List<ConsumptionEntity> consumptionrReadings = new ArrayList<>();
 
-        for (int month = -12; month < 0; month++) {
+        for (int month = 12; month > 0; month--) {
             final var localDateTime =
                     LocalDateTime.now().withMinute(59).withSecond(59).minusMonths(month);
             final var consumption = new ConsumptionEntity();

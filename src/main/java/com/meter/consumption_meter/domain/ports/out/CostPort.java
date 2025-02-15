@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 public interface CostPort {
-    public BigDecimal getCostPerKiloWattHourInCents(OffsetDateTime date);
+    public BigDecimal getPricePerKiloWattWithVAT(OffsetDateTime date);
 }

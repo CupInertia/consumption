@@ -42,7 +42,7 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
                 BigDecimal costThatMonth = BigDecimal.ZERO;
                 BigDecimal wattsThatMonth = BigDecimal.ZERO;
                 var costThatHour =
-                        costPort.getCostPerKiloWattHourInCents(previousReading.getTimeOfReading());
+                        costPort.getPricePerKiloWattWithVAT(previousReading.getTimeOfReading());
 
                 wattsThatMonth = BigDecimal.valueOf(previousReading.getWattHours());
                 costThatMonth =
@@ -67,8 +67,7 @@ public class GetConsumptionCostsImpl implements GetConsumptionCosts {
                         wattsThatMonth = BigDecimal.ZERO;
                     }
 
-                    costThatHour =
-                            costPort.getCostPerKiloWattHourInCents(reading.getTimeOfReading());
+                    costThatHour = costPort.getPricePerKiloWattWithVAT(reading.getTimeOfReading());
                     wattsThatMonth = wattsThatMonth.add(BigDecimal.valueOf(reading.getWattHours()));
                     costThatMonth =
                             costThatMonth.add(

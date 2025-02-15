@@ -58,11 +58,11 @@ public class GetConsumptionCostsImplTest {
                 Customer.builder().ID(customerId).meteringPoints(List.of(meteringPoint)).build();
 
         when(customerPort.getCustomer(customerId)).thenReturn(customer);
-        when(costPort.getCostPerKiloWattHourInCents(consumptionForJanuaryA.getTimeOfReading()))
+        when(costPort.getPricePerKiloWattWithVAT(consumptionForJanuaryA.getTimeOfReading()))
                 .thenReturn(BigDecimal.valueOf(3));
-        when(costPort.getCostPerKiloWattHourInCents(consumptionForJanuaryB.getTimeOfReading()))
+        when(costPort.getPricePerKiloWattWithVAT(consumptionForJanuaryB.getTimeOfReading()))
                 .thenReturn(BigDecimal.valueOf(4));
-        when(costPort.getCostPerKiloWattHourInCents(consumptionForFebruary.getTimeOfReading()))
+        when(costPort.getPricePerKiloWattWithVAT(consumptionForFebruary.getTimeOfReading()))
                 .thenReturn(BigDecimal.TWO);
 
         // when
