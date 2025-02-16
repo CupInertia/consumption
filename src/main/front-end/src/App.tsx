@@ -76,7 +76,7 @@ function App() {
 					data: reportForMeter!.costs.map((e) => e.cost),
 				},
 				{
-					backgroundColor: 'pink',
+					backgroundColor: "pink",
 					label: "Consumption in kilowatt-hours",
 					data: reportForMeter!.costs.map((e) => e.kilowattHoursConsumed),
 				},
