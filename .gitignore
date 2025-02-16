@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### Built frond end ###
-src/main/resources/static/assets
+src/main/resources/static
