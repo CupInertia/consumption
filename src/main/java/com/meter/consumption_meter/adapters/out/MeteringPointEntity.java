@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -22,9 +24,11 @@ public class MeteringPointEntity {
 
     @Id private String id;
 
+    @NotNull
     @Column(name = "customer_id")
     private String customerId;
 
+    @NotNull
     private String address;
 
     @JoinColumn(name = "metering_point_id")

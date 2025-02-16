@@ -6,6 +6,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -21,9 +23,16 @@ public class CustomerEntity {
 
     @Id private String ID;
 
+    @NotNull
     private String firstName;
+
+    @NotNull
     private String lastName;
+
+    @NotNull
     private String username;
+
+    @NotNull
     private String password;
 
     @JoinColumn(name = "customer_id")

@@ -2,8 +2,11 @@ package com.meter.consumption_meter.adapters.out;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -20,13 +23,17 @@ public class ConsumptionEntity {
 
     @Id private String id;
 
+    @NotNull
     @Column(name = "metering_point_id")
     private String meteringPointId;
 
+    @NotNull
     private long wattHours;
 
+    @NotNull
     private Instant timestamp;
 
+    @NotNull
     private int timestampOffset;
 
     public void setTimestamp(final OffsetDateTime timestamp) {
