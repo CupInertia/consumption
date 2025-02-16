@@ -27,7 +27,14 @@ public class SecurityConfig {
             @Override
             public UserDetails loadUserByUsername(String username)
                     throws UsernameNotFoundException {
-                final CustomerEntity customer = customerRepository.findByUsername(username);
+                final CustomerEntity customer =
+                        customerRepository
+                                .findByUsername(username)
+                                .orElseThrow(
+                                        () ->
+                                                new UsernameNotFoundException(
+                                                        "User not found: " + username));
+
                 return new UserDetails() {
 
                     @Override

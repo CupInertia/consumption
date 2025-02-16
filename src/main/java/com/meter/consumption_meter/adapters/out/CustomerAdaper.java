@@ -18,4 +18,10 @@ public class CustomerAdaper implements CustomerPort {
         final var customer = customerRepository.findById(customerId.toString()).orElseThrow();
         return customerEntityConverter.convert(customer);
     }
+
+    @Override
+    public Customer getCustomer(String userName) {
+        final var customer = customerRepository.findByUsername(userName).orElseThrow();
+        return customerEntityConverter.convert(customer);
+    }
 }

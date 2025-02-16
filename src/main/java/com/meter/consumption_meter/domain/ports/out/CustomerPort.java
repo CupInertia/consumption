@@ -5,4 +5,6 @@ import java.util.UUID;
 
 public interface CustomerPort {
     public Customer getCustomer(UUID customerId);
+
+    public Customer getCustomer(String userName);
 }
