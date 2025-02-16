@@ -3,8 +3,8 @@ import { Chart } from "primereact/chart";
 import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import { Toolbar } from "primereact/toolbar";
-import { Message } from 'primereact/message';
-import './App.css'
+import { Message } from "primereact/message";
+import "./App.css";
 
 type ConsumptionCost = {
 	timestamp: Date;
@@ -56,7 +56,6 @@ function App() {
 	});
 
 	var costChartData: ChartData | undefined = undefined;
-	var consumptionChartData: ChartData | undefined = undefined;
 	if (selectedMeterID !== null) {
 		const reportForMeter = consumptionReports.find(
 			(e) => e.meterID === selectedMeterID,
@@ -76,13 +75,8 @@ function App() {
 					label: "Cost in Euro",
 					data: reportForMeter!.costs.map((e) => e.cost),
 				},
-			],
-		};
-
-		consumptionChartData = {
-			labels,
-			datasets: [
 				{
+					backgroundColor: 'pink',
 					label: "Consumption in kilowatt-hours",
 					data: reportForMeter!.costs.map((e) => e.kilowattHoursConsumed),
 				},
@@ -93,7 +87,7 @@ function App() {
 	return (
 		<>
 			<Toolbar
-				start={fetching && <Message text={"Talling the costs..."}/>}
+				start={fetching && <Message text={"Tallying costs..."} />}
 				center={
 					consumptionReports.length > 0 && (
 						<>
@@ -110,10 +104,9 @@ function App() {
 				end={<a href="/logout">Log out</a>}
 			/>
 
-			{consumptionReports.length > 0 && (
+			{costChartData && (
 				<div className="Content">
 					<Chart type="bar" data={costChartData} />
-					<Chart type="bar" data={consumptionChartData} />
 				</div>
 			)}
 		</>
