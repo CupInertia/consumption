@@ -1,37 +1,121 @@
+import { ChartData } from "chart.js";
+import { Chart } from "primereact/chart";
+import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
-import "./App.css";
+import { Toolbar } from "primereact/toolbar";
+import { Message } from 'primereact/message';
+import './App.css'
 
 type ConsumptionCost = {
-	meteringPoint: {
-		id: string;
-		address: string;
-	};
-	timestamt: Date;
-	kiloWattHoursConsumed: number;
+	timestamp: Date;
+	kilowattHoursConsumed: number;
 	cost: number;
 };
 
+type ConsumptionReport = {
+	meterID: string;
+	meterAddress: string;
+	costs: ConsumptionCost[];
+};
+
+function parseResponse(response: any): ConsumptionReport[] {
+	return response.map((responseReport: any) => {
+		return {
+			...responseReport,
+			costs: responseReport.costs.map((e: any) => {
+				return {
+					...e,
+					timestamp: new Date(e.timestamp),
+				};
+			}),
+		};
+	});
+}
+
 function App() {
 	var [fetching, setFetching] = useState(true);
-	var [consumptionsCosts, setConsumptionCosts] = useState<ConsumptionCost[]>(
-		[],
-	);
+	var [consumptionReports, setConsumptionReports] = useState<
+		ConsumptionReport[]
+	>([]);
+	var [selectedMeterID, setSelectedMeterID] = useState<String | null>(null);
 
 	useEffect(() => {
-		fetch(
-			"http://localhost:8080/customer/89617b9c-91c3-4c5f-9e9f-24d7adb964c0/consumption",
-		).then(async (response: any) => {
-			setConsumptionCosts(await response.json());
-			setFetching(false);
-		});
+		if (consumptionReports.length === 0) {
+			fetch("http://localhost:8080/customer/consumption").then(
+				async (response: any) => {
+					const reports = parseResponse(await response.json());
+					setConsumptionReports(reports);
+					if (reports.length > 0) {
+						setSelectedMeterID(reports[0].meterID);
+					}
+
+					setFetching(false);
+				},
+			);
+		}
 	});
+
+	var costChartData: ChartData | undefined = undefined;
+	var consumptionChartData: ChartData | undefined = undefined;
+	if (selectedMeterID !== null) {
+		const reportForMeter = consumptionReports.find(
+			(e) => e.meterID === selectedMeterID,
+		);
+		const labels = reportForMeter!.costs.map((e) =>
+			Intl.DateTimeFormat("en-GB", {
+				year: "numeric",
+				month: "long",
+			}).format(e.timestamp),
+		);
+
+		costChartData = {
+			labels,
+			datasets: [
+				{
+					backgroundColor: "turquoise",
+					label: "Cost in Euro",
+					data: reportForMeter!.costs.map((e) => e.cost),
+				},
+			],
+		};
+
+		consumptionChartData = {
+			labels,
+			datasets: [
+				{
+					label: "Consumption in kilowatt-hours",
+					data: reportForMeter!.costs.map((e) => e.kilowattHoursConsumed),
+				},
+			],
+		};
+	}
 
 	return (
 		<>
-			{fetching && "Talling the costs..."}
-			<a href="/logout">Log out</a>
+			<Toolbar
+				start={fetching && <Message text={"Talling the costs..."}/>}
+				center={
+					consumptionReports.length > 0 && (
+						<>
+							<Dropdown
+								optionValue="meterID"
+								value={selectedMeterID}
+								options={consumptionReports}
+								optionLabel="meterAddress"
+								onChange={(e) => setSelectedMeterID(e.value)}
+							/>
+						</>
+					)
+				}
+				end={<a href="/logout">Log out</a>}
+			/>
 
-			{consumptionsCosts.length}
+			{consumptionReports.length > 0 && (
+				<div className="Content">
+					<Chart type="bar" data={costChartData} />
+					<Chart type="bar" data={consumptionChartData} />
+				</div>
+			)}
 		</>
 	);
 }
