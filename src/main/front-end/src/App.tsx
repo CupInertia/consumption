@@ -4,33 +4,9 @@ import { Dropdown } from "primereact/dropdown";
 import { useEffect, useState } from "react";
 import { Toolbar } from "primereact/toolbar";
 import { Message } from "primereact/message";
+import { ConsumptionReport } from "./ConsumptionReport";
+import { fetchConsumptionReports } from "./fetchConsumptionReports";
 import "./App.css";
-
-type ConsumptionCost = {
-	timestamp: Date;
-	kilowattHoursConsumed: number;
-	cost: number;
-};
-
-type ConsumptionReport = {
-	meterID: string;
-	meterAddress: string;
-	costs: ConsumptionCost[];
-};
-
-function parseResponse(response: any): ConsumptionReport[] {
-	return response.map((responseReport: any) => {
-		return {
-			...responseReport,
-			costs: responseReport.costs.map((e: any) => {
-				return {
-					...e,
-					timestamp: new Date(e.timestamp),
-				};
-			}),
-		};
-	});
-}
 
 function App() {
 	var [fetching, setFetching] = useState(true);
@@ -41,17 +17,16 @@ function App() {
 
 	useEffect(() => {
 		if (consumptionReports.length === 0) {
-			fetch("http://localhost:8080/customer/consumption").then(
-				async (response: any) => {
-					const reports = parseResponse(await response.json());
-					setConsumptionReports(reports);
-					if (reports.length > 0) {
-						setSelectedMeterID(reports[0].meterID);
-					}
+			(async () => {
+				const reports = await fetchConsumptionReports();
 
-					setFetching(false);
-				},
-			);
+				setConsumptionReports(reports);
+				if (reports.length > 0) {
+					setSelectedMeterID(reports[0].meterID);
+				}
+
+				setFetching(false);
+			})();
 		}
 	});
 
