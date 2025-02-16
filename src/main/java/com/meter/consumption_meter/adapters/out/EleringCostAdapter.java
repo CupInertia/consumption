@@ -27,7 +27,7 @@ public class EleringCostAdapter implements CostPort {
             BigDecimal centsPerKwhWithVat) {}
 
     @Override
-    public BigDecimal getPricePerKiloWattWithVAT(final OffsetDateTime requestDate) {
+    public BigDecimal getPricePerKilowattWithVAT(final OffsetDateTime requestDate) {
 
         return priceCache
                 .get(prepareForCache(requestDate))

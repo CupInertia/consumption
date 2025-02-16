@@ -13,6 +13,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class ConsumptionCost {
     private OffsetDateTime timestamp;
-    private BigDecimal kiloWattHoursConsumed;
+    private BigDecimal kilowattHoursConsumed;
     private BigDecimal cost;
 }

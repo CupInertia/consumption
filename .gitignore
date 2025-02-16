@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Built frond end ###
+src/main/resources/static/assets

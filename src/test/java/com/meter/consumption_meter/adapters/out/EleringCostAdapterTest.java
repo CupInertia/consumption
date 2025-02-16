@@ -90,7 +90,7 @@ public class EleringCostAdapterTest {
                 .thenReturn(Optional.of(expectedPrice));
 
         // when
-        final var price = eleringCostAdapter.getPricePerKiloWattWithVAT(requestDate);
+        final var price = eleringCostAdapter.getPricePerKilowattWithVAT(requestDate);
 
         // then
         verify(priceCache).cache(requestDate.toInstant(), expectedPrice);

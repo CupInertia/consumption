@@ -45,15 +45,14 @@ public class GetConsumptionReportsImpl implements GetConsumptionReports {
 
                 Consumption previousReading = consumptionIterator.next();
                 BigDecimal costThatMonth = BigDecimal.ZERO;
-                BigDecimal wattsThatMonth = BigDecimal.ZERO;
+                BigDecimal kilowattHoursThatMonth = BigDecimal.ZERO;
                 var costThatHour =
-                        costPort.getPricePerKiloWattWithVAT(previousReading.getTimeOfReading());
+                        costPort.getPricePerKilowattWithVAT(previousReading.getTimeOfReading());
 
-                wattsThatMonth = BigDecimal.valueOf(previousReading.getWattHours());
+                kilowattHoursThatMonth = previousReading.getKilowattHours();
                 costThatMonth =
                         costThatMonth.add(
-                                costThatHour.multiply(
-                                        BigDecimal.valueOf(previousReading.getWattHours())));
+                                costThatHour.multiply(previousReading.getKilowattHours()));
 
                 while (consumptionIterator.hasNext()) {
                     final var reading = consumptionIterator.next();
@@ -62,27 +61,25 @@ public class GetConsumptionReportsImpl implements GetConsumptionReports {
                         consumptionCosts.add(
                                 createConsumptionCost(
                                         meteringPoint,
-                                        wattsThatMonth,
+                                        kilowattHoursThatMonth,
                                         costThatMonth,
                                         previousReading.getTimeOfReading()));
 
                         costThatMonth = BigDecimal.ZERO;
-                        wattsThatMonth = BigDecimal.ZERO;
+                        kilowattHoursThatMonth = BigDecimal.ZERO;
                     }
 
-                    costThatHour = costPort.getPricePerKiloWattWithVAT(reading.getTimeOfReading());
-                    wattsThatMonth = wattsThatMonth.add(BigDecimal.valueOf(reading.getWattHours()));
+                    costThatHour = costPort.getPricePerKilowattWithVAT(reading.getTimeOfReading());
+                    kilowattHoursThatMonth = kilowattHoursThatMonth.add(reading.getKilowattHours());
                     costThatMonth =
-                            costThatMonth.add(
-                                    costThatHour.multiply(
-                                            BigDecimal.valueOf(reading.getWattHours())));
+                            costThatMonth.add(costThatHour.multiply(reading.getKilowattHours()));
                     previousReading = reading;
 
                     if (!consumptionIterator.hasNext()) {
                         consumptionCosts.add(
                                 createConsumptionCost(
                                         meteringPoint,
-                                        wattsThatMonth,
+                                        kilowattHoursThatMonth,
                                         costThatMonth,
                                         previousReading.getTimeOfReading()));
                     }
@@ -97,13 +94,13 @@ public class GetConsumptionReportsImpl implements GetConsumptionReports {
 
     private ConsumptionCost createConsumptionCost(
             final MeteringPoint meteringPoint,
-            BigDecimal wattsThatMonth,
+            BigDecimal kilowattHoursThatMonth,
             BigDecimal costThatMonth,
             OffsetDateTime tallingTime) {
         return ConsumptionCost.builder()
                 .timestamp(tallingTime)
-                .cost(costThatMonth.divide(BigDecimal.valueOf(100), RoundingMode.HALF_EVEN))
-                .kiloWattHoursConsumed(wattsThatMonth.divide(BigDecimal.valueOf(1000)))
+                .cost(costThatMonth.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_EVEN))
+                .kilowattHoursConsumed(kilowattHoursThatMonth)
                 .build();
     }
 

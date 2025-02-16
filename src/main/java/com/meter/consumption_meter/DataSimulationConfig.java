@@ -4,7 +4,6 @@ import com.meter.consumption_meter.adapters.out.ConsumptionEntity;
 import com.meter.consumption_meter.adapters.out.CustomerEntity;
 import com.meter.consumption_meter.adapters.out.CustomerRepository;
 import com.meter.consumption_meter.adapters.out.MeteringPointEntity;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -53,12 +52,11 @@ public class DataSimulationConfig {
     private MeteringPointEntity createMeteringPoint(final String address) {
         final List<ConsumptionEntity> consumptionrReadings = new ArrayList<>();
 
-        for (int month = 12; month > 0; month--) {
-            final var localDateTime =
-                    LocalDateTime.now().withMinute(59).withSecond(59).minusMonths(month);
+        for (int month = 1; month <= 12; month++) {
             final var consumption = new ConsumptionEntity();
             consumption.setId(createID());
-            consumption.setTimestamp(OffsetDateTime.of(localDateTime, ZoneOffset.ofHours(2)));
+            consumption.setTimestamp(
+                    OffsetDateTime.of(2024, month, 1, 23, 59, 0, 0, ZoneOffset.ofHours(2)));
             consumption.setWattHours(Double.valueOf(Math.random() * 100000).longValue());
 
             consumptionrReadings.add(consumption);
