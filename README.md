@@ -13,8 +13,8 @@ With a bit more time I would have completely separated the front-end and backend
 and used OAuth for authentication between the two, giving either full freedom.
 
 ### 2
-The generated consumption data is based on hourly measurements, not a continuous readouts from meters, with timestamps. It is convenient for the application, but potentially not realistic.
+The generated consumption data is based on hourly measurements, not continuously incrementing readouts from meters, with timestamps. It is convenient for the application, but potentially unrealistic.
 
 ### 3
-The solution doesn't account for consumption on different years at the moment, per meter that is.  
+The solution doesn't account for consumption on different years, per meter that is.
 
