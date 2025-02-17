@@ -7,6 +7,7 @@ import { Message } from "primereact/message";
 import { ConsumptionReport } from "./ConsumptionReport";
 import { fetchConsumptionReports } from "./fetchConsumptionReports";
 import "./App.css";
+import { createChartData } from "./createChartData";
 
 function App() {
 	var [fetching, setFetching] = useState(true);
@@ -34,29 +35,9 @@ function App() {
 	if (selectedMeterID !== null) {
 		const reportForMeter = consumptionReports.find(
 			(e) => e.meterID === selectedMeterID,
-		);
-		const labels = reportForMeter!.costs.map((e) =>
-			Intl.DateTimeFormat("en-GB", {
-				year: "numeric",
-				month: "long",
-			}).format(e.timestamp),
-		);
+		)!;
 
-		costChartData = {
-			labels,
-			datasets: [
-				{
-					backgroundColor: "turquoise",
-					label: "Cost in Euro",
-					data: reportForMeter!.costs.map((e) => e.cost),
-				},
-				{
-					backgroundColor: "pink",
-					label: "Consumption in kilowatt-hours",
-					data: reportForMeter!.costs.map((e) => e.kilowattHoursConsumed),
-				},
-			],
-		};
+		costChartData = createChartData(reportForMeter);
 	}
 
 	return (

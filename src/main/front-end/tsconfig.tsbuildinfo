@@ -1,0 +1,1 @@
+{"root":["./src/App.test.tsx","./src/App.tsx","./src/ConsumptionCost.ts","./src/ConsumptionReport.ts","./src/createChartData.test.ts","./src/createChartData.ts","./src/fetchConsumptionReports.test.ts","./src/fetchConsumptionReports.ts","./src/main.tsx","./src/vite-env.d.ts","./jest.setup.ts"],"errors":true,"version":"5.7.3"}

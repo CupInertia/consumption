@@ -34,7 +34,7 @@ spotless {
 	}
 	format 'styling', {
 		// you have to set the target manually
-		target 'src/main/front-end/src/**/*.tsx'
+		target 'src/main/front-end/src/**/*.ts*'
 
 		// Download Biome from the network if not already downloaded, see below for more info
 		biome('1.2.0')
