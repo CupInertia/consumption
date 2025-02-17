@@ -12,6 +12,7 @@ public class Customer {
     private UUID ID;
     private String firstName;
     private String lastName;
+    // username and password are probably not needed in domain
     private String username;
     private String password;
 
